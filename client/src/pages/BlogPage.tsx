@@ -3,55 +3,20 @@ import { Footer } from "@/components/Footer";
 import { BlogCard } from "@/components/BlogCard";
 import { ProductCard } from "@/components/ProductCard";
 import { Card, CardContent } from "@/components/ui/card";
-import heroImg from "@assets/generated_images/Hero_banner_background_64ea9cd3.png";
-import headphonesImg from "@assets/generated_images/Wireless_headphones_product_d0c9cf29.png";
-import smartphoneImg from "@assets/generated_images/Smartphone_product_shot_52f1a2b5.png";
+import { useQuery } from "@tanstack/react-query";
+import type { BlogPost, Product } from "@shared/schema";
+import { format } from "date-fns";
 
 export default function BlogPage() {
-  // TODO: remove mock functionality - replace with real data from backend
-  const blogPosts = [
-    {
-      id: "1",
-      title: "Best Smartphones Under $500 in 2025",
-      excerpt: "Looking for a budget-friendly smartphone that doesn't compromise on features? We've tested and reviewed the top options available this year.",
-      image: heroImg,
-      category: "Tech Reviews",
-      date: "Nov 8, 2025",
-      readTime: "5 min read",
-      path: "/blog/best-smartphones-under-500",
-    },
-    {
-      id: "2",
-      title: "Top 10 Kitchen Appliances Every Home Needs",
-      excerpt: "Transform your cooking experience with these essential kitchen appliances that combine functionality with modern design.",
-      image: heroImg,
-      category: "Home & Kitchen",
-      date: "Nov 7, 2025",
-      readTime: "8 min read",
-      path: "/blog/top-kitchen-appliances",
-    },
-  ];
+  const { data: blogPosts = [], isLoading: isLoadingPosts } = useQuery<BlogPost[]>({
+    queryKey: ['/api/blog-posts'],
+  });
 
-  const relatedProducts = [
-    {
-      id: "1",
-      title: "Premium Wireless Headphones",
-      image: headphonesImg,
-      price: "$299.99",
-      rating: 4.5,
-      reviewCount: 1234,
-      category: "Electronics",
-    },
-    {
-      id: "2",
-      title: "Latest Flagship Smartphone",
-      image: smartphoneImg,
-      price: "$899.99",
-      rating: 4.8,
-      reviewCount: 2341,
-      category: "Electronics",
-    },
-  ];
+  const { data: products = [], isLoading: isLoadingProducts } = useQuery<Product[]>({
+    queryKey: ['/api/products'],
+  });
+
+  const relatedProducts = products.slice(0, 2);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -65,9 +30,24 @@ export default function BlogPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Blog Posts */}
             <div className="lg:col-span-2 space-y-6">
-              {blogPosts.map((post) => (
-                <BlogCard key={post.id} {...post} />
-              ))}
+              {isLoadingPosts ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">Loading blog posts...</p>
+                </div>
+              ) : blogPosts.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">No blog posts available yet. Check back soon!</p>
+                </div>
+              ) : (
+                blogPosts.map((post) => (
+                  <BlogCard 
+                    key={post.id} 
+                    {...post} 
+                    date={format(new Date(post.date), "MMM d, yyyy")}
+                    path={`/blog/${post.slug}`}
+                  />
+                ))
+              )}
             </div>
 
             {/* Sidebar */}
@@ -99,11 +79,19 @@ export default function BlogPage() {
               {/* Related Products */}
               <div>
                 <h3 className="font-semibold text-lg mb-4">Featured Products</h3>
-                <div className="space-y-4">
-                  {relatedProducts.map((product) => (
-                    <ProductCard key={product.id} {...product} />
-                  ))}
-                </div>
+                {isLoadingProducts ? (
+                  <p className="text-sm text-muted-foreground">Loading products...</p>
+                ) : (
+                  <div className="space-y-4">
+                    {relatedProducts.map((product) => (
+                      <ProductCard 
+                        key={product.id} 
+                        {...product} 
+                        badge={product.badge || undefined}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             </aside>
           </div>

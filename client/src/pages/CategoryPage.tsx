@@ -5,56 +5,63 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useState } from "react";
-import headphonesImg from "@assets/generated_images/Wireless_headphones_product_d0c9cf29.png";
-import smartphoneImg from "@assets/generated_images/Smartphone_product_shot_52f1a2b5.png";
-import smartwatchImg from "@assets/generated_images/Smart_watch_product_707b82da.png";
-import lampImg from "@assets/generated_images/Desk_lamp_product_36683480.png";
+import { useState, useMemo } from "react";
+import { useRoute } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import type { Product } from "@shared/schema";
+
+const CATEGORY_SLUG_MAP: Record<string, string> = {
+  'electronics': 'Electronics',
+  'fashion': 'Fashion',
+  'home-kitchen': 'Home & Kitchen',
+  'beauty': 'Beauty',
+  'lifestyle': 'Lifestyle',
+};
 
 export default function CategoryPage() {
+  const [, params] = useRoute("/category/:category");
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [sortBy, setSortBy] = useState("featured");
 
-  // TODO: remove mock functionality - replace with real data from backend
-  const products = [
-    {
-      id: "1",
-      title: "Premium Wireless Noise-Cancelling Headphones",
-      image: headphonesImg,
-      price: "$299.99",
-      rating: 4.5,
-      reviewCount: 1234,
-      category: "Electronics",
-      badge: "Best Seller",
+  const categoryParam = params?.category || "";
+  const categoryName = CATEGORY_SLUG_MAP[categoryParam] || categoryParam
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+
+  const { data: allProducts = [], isLoading } = useQuery<Product[]>({
+    queryKey: ['/api/products', categoryName],
+    queryFn: async () => {
+      const res = await fetch(`/api/products/category/${encodeURIComponent(categoryName)}`, {
+        credentials: "include",
+      });
+      if (!res.ok) {
+        throw new Error(`${res.status}: ${res.statusText}`);
+      }
+      return res.json();
     },
-    {
-      id: "2",
-      title: "Latest Flagship Smartphone with 5G",
-      image: smartphoneImg,
-      price: "$899.99",
-      rating: 4.8,
-      reviewCount: 2341,
-      category: "Electronics",
-    },
-    {
-      id: "3",
-      title: "Smart Fitness Watch with Heart Monitor",
-      image: smartwatchImg,
-      price: "$199.99",
-      rating: 4.6,
-      reviewCount: 1023,
-      category: "Electronics",
-    },
-    {
-      id: "4",
-      title: "LED Desk Lamp with USB Charging",
-      image: lampImg,
-      price: "$45.99",
-      rating: 4.3,
-      reviewCount: 445,
-      category: "Electronics",
-    },
-  ];
+  });
+
+  const products = useMemo(() => {
+    let filtered = [...allProducts];
+    
+    filtered = filtered.filter(p => {
+      const price = parseFloat(p.price.replace('$', ''));
+      return price >= priceRange[0] && price <= priceRange[1];
+    });
+
+    if (sortBy === "price-low") {
+      filtered.sort((a, b) => parseFloat(a.price.replace('$', '')) - parseFloat(b.price.replace('$', '')));
+    } else if (sortBy === "price-high") {
+      filtered.sort((a, b) => parseFloat(b.price.replace('$', '')) - parseFloat(a.price.replace('$', '')));
+    } else if (sortBy === "rating") {
+      filtered.sort((a, b) => b.rating - a.rating);
+    } else if (sortBy === "newest") {
+      filtered.reverse();
+    }
+
+    return filtered;
+  }, [allProducts, priceRange, sortBy]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -64,7 +71,7 @@ export default function CategoryPage() {
         <div className="bg-muted/30 py-4 border-b">
           <div className="container mx-auto px-4">
             <p className="text-sm text-muted-foreground">
-              Home / <span className="text-foreground">Electronics</span>
+              Home / <span className="text-foreground">{categoryName}</span>
             </p>
           </div>
         </div>
@@ -118,7 +125,7 @@ export default function CategoryPage() {
             <div className="flex-1">
               {/* Header */}
               <div className="flex justify-between items-center mb-6 gap-4 flex-wrap">
-                <h1 className="text-3xl font-bold" data-testid="text-category-title">Electronics</h1>
+                <h1 className="text-3xl font-bold" data-testid="text-category-title">{categoryName}</h1>
                 <Select value={sortBy} onValueChange={setSortBy}>
                   <SelectTrigger className="w-48" data-testid="select-sort">
                     <SelectValue placeholder="Sort by" />
@@ -134,11 +141,25 @@ export default function CategoryPage() {
               </div>
 
               {/* Products */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {products.map((product) => (
-                  <ProductCard key={product.id} {...product} />
-                ))}
-              </div>
+              {isLoading ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">Loading products...</p>
+                </div>
+              ) : products.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">No products found in this category.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {products.map((product) => (
+                    <ProductCard 
+                      key={product.id} 
+                      {...product} 
+                      badge={product.badge || undefined}
+                    />
+                  ))}
+                </div>
+              )}
 
               {/* Pagination */}
               <div className="mt-8 flex justify-center gap-2">
