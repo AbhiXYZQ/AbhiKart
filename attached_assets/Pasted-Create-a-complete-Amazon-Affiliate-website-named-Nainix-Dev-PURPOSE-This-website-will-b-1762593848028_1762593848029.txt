@@ -1,0 +1,73 @@
+Create a complete Amazon Affiliate website named **Nainix Dev**.
+
+👉 PURPOSE:
+This website will be used for promoting and reviewing Amazon affiliate products from categories like electronics, fashion, home & kitchen, beauty, and lifestyle. The goal is to attract visitors, provide honest reviews, and redirect them to Amazon through affiliate links.
+
+👉 DESIGN STYLE:
+- Clean, modern, and professional look with a white + light gray base theme.
+- Add a toggle for dark mode.
+- Use smooth hover effects and soft shadows.
+- Responsive layout for both desktop and mobile.
+- Attractive product cards with images, ratings, price (approx.), and “Buy on Amazon” button.
+- Add a fixed/sticky top navigation bar with category links.
+- Include a search bar at the top.
+- Add smooth scrolling and animated sections for featured products.
+
+👉 PAGES TO INCLUDE:
+1. **Home Page**
+   - Hero banner with website name “Nainix Dev” and tagline “Smart Shopping with Smart Reviews”.
+   - Section for Featured Categories.
+   - “Top Deals Today” carousel.
+   - Newsletter subscription box.
+
+2. **Category Pages**
+   - Pages for Electronics, Fashion, Home & Kitchen, Beauty, and Lifestyle.
+   - Each page should display top trending products with short reviews and “Buy on Amazon” buttons.
+
+3. **Product Review Page Template**
+   - Product title, large image, description, features, pros & cons, and final verdict.
+   - Comparison Table of similar products.
+   - “Buy Now” button linked to Amazon affiliate link.
+   - User rating stars and comment section (optional).
+
+4. **Blog Section**
+   - SEO-friendly blog posts like “Best Smartphones under ₹20,000” or “Top 10 Kitchen Appliances 2025”.
+   - Add related product recommendations at the end of each article.
+
+5. **About Page**
+   - Describe Nainix Dev as a product review and recommendation platform built by Abhishek Kumar.
+
+6. **Contact Page**
+   - Contact form + Email + Social media links.
+
+7. **Disclaimer & Privacy Policy Page**
+   - Add Amazon Affiliate Disclaimer: “As an Amazon Associate, I earn from qualifying purchases.”
+
+👉 FUNCTIONAL FEATURES:
+- Admin panel for adding or editing products and blog posts.
+- Wishlist or “Save for Later” feature.
+- Dark mode toggle.
+- Fast loading speed.
+- SEO meta tags and schema.
+- Google Analytics integration.
+- Footer with Quick Links, Social Links, and Copyright.
+
+👉 COLORS & FONTS:
+- Primary color: #1E90FF (blue)
+- Secondary color: #FFD700 (gold accent)
+- Font: Poppins or Inter
+- Buttons: Rounded edges, soft shadow, hover glow effect.
+
+👉 OPTIONAL EXTRAS:
+- “Compare Products” feature.
+- Price filter and sorting options.
+- Popup newsletter form.
+- Floating “Back to Top” button.
+- Responsive for all devices.
+
+👉 CONTENT EXAMPLE:
+Use demo content (images and sample affiliate URLs) which can be replaced later with actual Amazon links.
+
+👉 OUTPUT GOAL:
+Deliver a fully responsive, fast, SEO-optimized Amazon affiliate website layout ready for customization and publishing.
+
