@@ -23,27 +23,27 @@ export function Header() {
         <div className="flex h-20 items-center justify-between gap-4">
           {/* Logo */}
           <Link href="/">
-            <a className="flex items-center space-x-2" data-testid="link-home">
+            <div className="flex items-center space-x-2 cursor-pointer" data-testid="link-home">
               <div className="text-2xl font-bold text-primary">Nainix Dev</div>
-            </a>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             {categories.map((category) => (
               <Link key={category.path} href={category.path}>
-                <a
-                  className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+                <div
+                  className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors cursor-pointer"
                   data-testid={`link-${category.name.toLowerCase().replace(/\s+/g, '-')}`}
                 >
                   {category.name}
-                </a>
+                </div>
               </Link>
             ))}
             <Link href="/blog">
-              <a className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors" data-testid="link-blog">
+              <div className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors cursor-pointer" data-testid="link-blog">
                 Blog
-              </a>
+              </div>
             </Link>
           </nav>
 
@@ -94,21 +94,21 @@ export function Header() {
             <nav className="flex flex-col space-y-3">
               {categories.map((category) => (
                 <Link key={category.path} href={category.path}>
-                  <a
-                    className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+                  <div
+                    className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors cursor-pointer"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {category.name}
-                  </a>
+                  </div>
                 </Link>
               ))}
               <Link href="/blog">
-                <a
-                  className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+                <div
+                  className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors cursor-pointer"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Blog
-                </a>
+                </div>
               </Link>
             </nav>
           </div>
