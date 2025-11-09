@@ -52,11 +52,15 @@ export class DatabaseStorage implements IStorage {
     return product || undefined;
   }
 
-  async getProductsByCategory(category: string): Promise<Product[]> {
-    return await db.select().from(products).where(
-      sql`lower(${products.category}) = lower(${category})`
-    );
-  }
+ async getProductsByCategory(category: string): Promise<Product[]> {
+  // हम सीधे 'eq' (equals) का उपयोग कर रहे हैं।
+  // यह केस-सेंसिटिव (case-sensitive) है, लेकिन यह काम करना चाहिए क्योंकि
+  // आपके डेटाबेस में 'Electronics' (E कैपिटल) है
+  // और आपकी API रिक्वेस्ट भी '/Electronics' (E कैपिटल) के लिए है।
+  return await db.select().from(products).where(
+    eq(products.category, category)
+  );
+}
 
   async updateProduct(id: string, updates: Partial<InsertProduct>): Promise<Product | undefined> {
     const [product] = await db
