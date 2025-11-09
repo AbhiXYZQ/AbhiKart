@@ -74,7 +74,7 @@ export default function AdminPanel() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
       toast({ title: "Logged in successfully" });
-      setLocation('/admin');
+      setLocation('/');
     },
     onError: () => {
       toast({ title: "Login failed", description: "Invalid credentials", variant: "destructive" });
