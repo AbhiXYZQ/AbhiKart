@@ -90,7 +90,7 @@ export default function CategoryPage() {
                     <h3 className="font-medium mb-3">Price Range</h3>
                     <Slider
                       min={0}
-                      max={1000}
+                      max={1000000}
                       step={10}
                       value={priceRange}
                       onValueChange={setPriceRange}
