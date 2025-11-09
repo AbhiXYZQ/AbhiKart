@@ -20,7 +20,7 @@ const CATEGORY_SLUG_MAP: Record<string, string> = {
 
 export default function CategoryPage() {
   const [, params] = useRoute("/category/:category");
-  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [priceRange, setPriceRange] = useState([0, 500000]);
   const [sortBy, setSortBy] = useState("featured");
 
   const categoryParam = params?.category || "";
@@ -32,11 +32,11 @@ export default function CategoryPage() {
   const { data: allProducts = [], isLoading } = useQuery<Product[]>({
     queryKey: ['/api/products', categoryName],
     queryFn: async () => {
-      const res = await fetch(`/api/products/category/${encodeURIComponent(categoryName)}`, {
+      const res = await fetch(`/api/products/category/₹{encodeURIComponent(categoryName)}`, {
         credentials: "include",
       });
       if (!res.ok) {
-        throw new Error(`${res.status}: ${res.statusText}`);
+        throw new Error(`₹{res.status}: ₹{res.statusText}`);
       }
       return res.json();
     },
@@ -46,14 +46,14 @@ export default function CategoryPage() {
     let filtered = [...allProducts];
     
     filtered = filtered.filter(p => {
-      const price = parseFloat(p.price.replace('$', ''));
+      const price = parseFloat(p.price.replace('₹', ''));
       return price >= priceRange[0] && price <= priceRange[1];
     });
 
     if (sortBy === "price-low") {
-      filtered.sort((a, b) => parseFloat(a.price.replace('$', '')) - parseFloat(b.price.replace('$', '')));
+      filtered.sort((a, b) => parseFloat(a.price.replace('₹', '')) - parseFloat(b.price.replace('₹', '')));
     } else if (sortBy === "price-high") {
-      filtered.sort((a, b) => parseFloat(b.price.replace('$', '')) - parseFloat(a.price.replace('$', '')));
+      filtered.sort((a, b) => parseFloat(b.price.replace('₹', '')) - parseFloat(a.price.replace('₹', '')));
     } else if (sortBy === "rating") {
       filtered.sort((a, b) => b.rating - a.rating);
     } else if (sortBy === "newest") {
@@ -90,7 +90,7 @@ export default function CategoryPage() {
                     <h3 className="font-medium mb-3">Price Range</h3>
                     <Slider
                       min={0}
-                      max={1000000}
+                      max={500000}
                       step={10}
                       value={priceRange}
                       onValueChange={setPriceRange}
@@ -98,8 +98,8 @@ export default function CategoryPage() {
                       data-testid="slider-price-range"
                     />
                     <div className="flex justify-between text-sm text-muted-foreground">
-                      <span>${priceRange[0]}</span>
-                      <span>${priceRange[1]}</span>
+                      <span>₹{priceRange[0]}</span>
+                      <span>₹{priceRange[1]}</span>
                     </div>
                   </div>
 
