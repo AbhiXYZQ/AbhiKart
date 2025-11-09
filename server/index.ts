@@ -12,14 +12,17 @@ declare module 'http' {
 }
 
 app.use(session({
-  secret: process.env.SESSION_SECRET || "dev-secret-change-in-production",
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24 * 7
-  }
+  secret: process.env.SESSION_SECRET || "dev-secret-change-in-production",
+  resave: false,
+  saveUninitialized: false,
+  // [!!!] यह Render के लिए सबसे ज़रूरी फिक्स है
+  proxy: true, 
+  cookie: {
+    secure: true, // Render HTTPS का उपयोग करता है
+    httpOnly: true,
+    sameSite: 'lax', // सुरक्षा के लिए
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 दिन
+  }
 }));
 
 app.use(express.json({
