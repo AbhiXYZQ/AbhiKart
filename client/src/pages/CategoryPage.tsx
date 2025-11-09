@@ -32,11 +32,11 @@ export default function CategoryPage() {
   const { data: allProducts = [], isLoading } = useQuery<Product[]>({
     queryKey: ['/api/products', categoryName],
     queryFn: async () => {
-      const res = await fetch(`/api/products/category/₹{encodeURIComponent(categoryName)}`, {
+      const res = await fetch(`/api/products/category/${encodeURIComponent(categoryName)}`, {
         credentials: "include",
       });
       if (!res.ok) {
-        throw new Error(`₹{res.status}: ₹{res.statusText}`);
+        throw new Error(`${res.status}: ₹{res.statusText}`);
       }
       return res.json();
     },
