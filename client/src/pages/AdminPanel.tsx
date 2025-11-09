@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -18,6 +19,7 @@ import type { Product, BlogPost } from "@shared/schema";
 
 export default function AdminPanel() {
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<{ type: 'product' | 'blog'; id: string } | null>(null);
@@ -72,6 +74,7 @@ export default function AdminPanel() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
       toast({ title: "Logged in successfully" });
+      setLocation('/admin');
     },
     onError: () => {
       toast({ title: "Login failed", description: "Invalid credentials", variant: "destructive" });
