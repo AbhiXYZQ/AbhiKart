@@ -19,7 +19,7 @@ export default function PrivacyPolicyPage() {
               <section>
                 <h2 className="text-2xl font-bold mb-4">Introduction</h2>
                 <p className="text-muted-foreground">
-                  Nainix Dev ("we," "us," or "our") respects your privacy and is committed to 
+                  Abhi's Kart ("we," "us," or "our") respects your privacy and is committed to 
                   protecting your personal data. This privacy policy explains how we collect, use, 
                   and safeguard your information when you visit our website.
                 </p>

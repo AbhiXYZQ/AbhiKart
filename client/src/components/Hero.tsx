@@ -19,7 +19,7 @@ export function Hero() {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center text-white">
         <h1 className="text-4xl md:text-6xl font-bold mb-4" data-testid="text-hero-title">
-          Nainix Dev
+          Abhi's Kart
         </h1>
         <p className="text-xl md:text-2xl mb-8 font-medium" data-testid="text-hero-tagline">
           Smart Shopping with Smart Reviews

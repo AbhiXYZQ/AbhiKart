@@ -1,4 +1,4 @@
-Create a complete Amazon Affiliate website named **Nainix Dev**.
+Create a complete Amazon Affiliate website named **Abhi's Kart**.
 
 👉 PURPOSE:
 This website will be used for promoting and reviewing Amazon affiliate products from categories like electronics, fashion, home & kitchen, beauty, and lifestyle. The goal is to attract visitors, provide honest reviews, and redirect them to Amazon through affiliate links.
@@ -15,7 +15,7 @@ This website will be used for promoting and reviewing Amazon affiliate products 
 
 👉 PAGES TO INCLUDE:
 1. **Home Page**
-   - Hero banner with website name “Nainix Dev” and tagline “Smart Shopping with Smart Reviews”.
+   - Hero banner with website name “Abhi's Kart” and tagline “Smart Shopping with Smart Reviews”.
    - Section for Featured Categories.
    - “Top Deals Today” carousel.
    - Newsletter subscription box.
@@ -35,7 +35,7 @@ This website will be used for promoting and reviewing Amazon affiliate products 
    - Add related product recommendations at the end of each article.
 
 5. **About Page**
-   - Describe Nainix Dev as a product review and recommendation platform built by Abhishek Kumar.
+   - Describe Abhi's Kart as a product review and recommendation platform built by Abhishek Kumar.
 
 6. **Contact Page**
    - Contact form + Email + Social media links.

@@ -24,7 +24,7 @@ export function Header() {
           {/* Logo */}
           <Link href="/">
             <div className="flex items-center space-x-2 cursor-pointer" data-testid="link-home">
-              <div className="text-2xl font-bold text-primary">Nainix Dev</div>
+              <div className="text-2xl font-bold text-primary">Abhi's Kart</div>
             </div>
           </Link>
 

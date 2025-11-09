@@ -1,4 +1,4 @@
-# Design Guidelines for Nainix Dev - Amazon Affiliate Website
+# Design Guidelines for Abhi's Kart - Amazon Affiliate Website
 
 ## Design Approach
 **Reference-Based Approach**: Drawing inspiration from modern e-commerce and review platforms like Wirecutter, CNET, and Amazon itself, while maintaining a clean, professional aesthetic optimized for product discovery and conversion.
@@ -53,7 +53,7 @@
 
 ### Hero Section
 - Full-width banner with gradient overlay (blue to transparent)
-- Large heading "Nainix Dev" with tagline "Smart Shopping with Smart Reviews"
+- Large heading "Abhi's Kart" with tagline "Smart Shopping with Smart Reviews"
 - Height: 60vh minimum
 - CTA button: "Explore Deals" with rounded corners, soft shadow, hover glow effect
 

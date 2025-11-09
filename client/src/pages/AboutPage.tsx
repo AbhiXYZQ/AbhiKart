@@ -11,12 +11,12 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-3xl mx-auto">
             <h1 className="text-4xl font-bold mb-6" data-testid="text-page-title">
-              About Nainix Dev
+              About Abhi's Kart
             </h1>
             
             <div className="prose prose-lg max-w-none mb-12">
               <p className="text-lg text-muted-foreground mb-6">
-                Welcome to Nainix Dev, your trusted source for honest product reviews and smart 
+                Welcome to Abhi's Kart, your trusted source for honest product reviews and smart 
                 shopping recommendations. Founded by <strong>Abhishek Kumar</strong>, our mission 
                 is to help you make informed purchasing decisions by providing detailed, unbiased 
                 reviews across a wide range of product categories.
@@ -65,7 +65,7 @@ export default function AboutPage() {
               <CardContent className="p-8">
                 <h2 className="text-2xl font-bold mb-4">Our Commitment</h2>
                 <p className="text-muted-foreground mb-4">
-                  At Nainix Dev, we believe in transparency and authenticity. Every product we review 
+                  At Abhi's Kart, we believe in transparency and authenticity. Every product we review 
                   is carefully evaluated based on real-world testing and extensive research. We cover 
                   categories including electronics, fashion, home & kitchen, beauty, and lifestyle 
                   products to help you find exactly what you need.

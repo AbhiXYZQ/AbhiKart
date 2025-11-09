@@ -13,7 +13,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* About */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">Nainix Dev</h3>
+            <h3 className="font-semibold text-lg mb-4">Abhi's Kart</h3>
             <p className="text-sm text-muted-foreground mb-4">
               Your trusted source for honest product reviews and smart shopping recommendations.
             </p>
@@ -125,7 +125,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground text-center md:text-left">
-            © 2025 Nainix Dev by Abhishek Kumar. All rights reserved.
+            © 2025 Abhi's Kart by Abhishek Kumar. All rights reserved.
           </p>
           <p className="text-xs text-muted-foreground text-center md:text-right">
             As an Amazon Associate, I earn from qualifying purchases.
