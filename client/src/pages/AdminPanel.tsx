@@ -26,15 +26,15 @@ export default function AdminPanel() {
 
   const { data: user, isLoading: isLoadingUser } = useQuery<{ id: string; username: string }>({
     queryKey: ['/api/auth/user'],
-    queryFn: async () => { // <--- queryFn को बदलें
-      const res = await fetch('/api/auth/user', {
-        credentials: 'include', // <--- यह लाइन जोड़ें!
-      });
-      if (!res.ok) {
-        throw new Error('Not authenticated');
-      }
-      return res.json();
-    },
+    queryFn: async () => {
+      const res = await fetch('/api/auth/user', {
+        credentials: 'include',
+        });
+        if (!res.ok) {
+          throw new Error('Not authenticated');
+          }
+          return res.json();
+          },
     retry: false,
   });
 
