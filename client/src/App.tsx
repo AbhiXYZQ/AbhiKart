@@ -13,6 +13,8 @@ import DisclaimerPage from "@/pages/DisclaimerPage";
 import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage";
 import AdminPanel from "@/pages/AdminPanel";
 import NotFound from "@/pages/not-found";
+
+// [!!!] Step 1: Naye SearchPage ko import karein [!!!]
 import SearchPage from "@/pages/SearchPage";
 
 function Router() {
@@ -28,6 +30,10 @@ function Router() {
       <Route path="/disclaimer" component={DisclaimerPage} />
       <Route path="/privacy-policy" component={PrivacyPolicyPage} />
       <Route path="/admin" component={AdminPanel} />
+      
+      {/* [!!!] Step 2: SearchPage ka route yahaan add karein (NotFound se theek pehle) [!!!] */}
+      <Route path="/search" component={SearchPage} />
+
       <Route component={NotFound} />
     </Switch>
   );
