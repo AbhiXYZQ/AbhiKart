@@ -13,9 +13,10 @@ import DisclaimerPage from "@/pages/DisclaimerPage";
 import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage";
 import AdminPanel from "@/pages/AdminPanel";
 import NotFound from "@/pages/not-found";
-
-// [!!!] Step 1: Naye SearchPage ko import karein [!!!]
 import SearchPage from "@/pages/SearchPage";
+
+// [!!!] NAYE BLOG POST PAGE KO IMPORT KAREIN [!!!]
+import BlogPostPage from "@/pages/BlogPostPage";
 
 function Router() {
   return (
@@ -23,15 +24,19 @@ function Router() {
       <Route path="/" component={HomePage} />
       <Route path="/category/:categoryName" component={CategoryPage} />
       <Route path="/product/:productId" component={ProductReviewPage} />
+      
+      {/* Yeh route blog list page (saare posts) ke liye hai */}
       <Route path="/blog" component={BlogPage} />
-      <Route path="/blog/:slug" component={BlogPage} />
+      
+      {/* [!!!] ISS ROUTE KO UPDATE KAREIN [!!!] */}
+      {/* Yeh route ab naye BlogPostPage ko point karega */}
+      <Route path="/blog/:slug" component={BlogPostPage} />
+      
       <Route path="/about" component={AboutPage} />
       <Route path="/contact" component={ContactPage} />
       <Route path="/disclaimer" component={DisclaimerPage} />
       <Route path="/privacy-policy" component={PrivacyPolicyPage} />
       <Route path="/admin" component={AdminPanel} />
-      
-      {/* [!!!] Step 2: SearchPage ka route yahaan add karein (NotFound se theek pehle) [!!!] */}
       <Route path="/search" component={SearchPage} />
 
       <Route component={NotFound} />
