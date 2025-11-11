@@ -22,6 +22,9 @@ export default function CategoryPage() {
   const [, params] = useRoute("/category/:category");
   const [priceRange, setPriceRange] = useState([0, 500000]);
   const [sortBy, setSortBy] = useState("featured");
+  
+  // [!!!] NAYI STATE RATING FILTERS KE LIYE
+  const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
 
   const categoryParam = params?.category || "";
   const categoryName = CATEGORY_SLUG_MAP[categoryParam] || categoryParam
@@ -42,14 +45,39 @@ export default function CategoryPage() {
     },
   });
 
+  // [!!!] NAYA HANDLER RATING CHANGE KE LIYE
+  const handleRatingChange = (rating: number, checked: boolean) => {
+    setSelectedRatings(prev => {
+      if (checked) {
+        // Rating ko array mein add karein
+        return [...prev, rating];
+      } else {
+        // Rating ko array se remove karein
+        return prev.filter(r => r !== rating);
+      }
+    });
+  };
+
   const products = useMemo(() => {
     let filtered = [...allProducts];
     
+    // [!!!] RATING FILTER LOGIC
+    // Agar koi rating select ki gayi hai, toh minimum select ki gayi rating dhoondhein
+    // (jaise agar "3+" aur "4+" select kiya hai, toh hum 3 se filter karenge)
+    const minRating = selectedRatings.length > 0 ? Math.min(...selectedRatings) : 0;
+
+    if (minRating > 0) {
+      filtered = filtered.filter(p => p.rating >= minRating);
+    }
+    // [!!!] RATING FILTER LOGIC KHATM
+    
+    // Price filter (yeh pehle se tha)
     filtered = filtered.filter(p => {
       const price = parseFloat(p.price.replace('₹', ''));
       return price >= priceRange[0] && price <= priceRange[1];
     });
 
+    // Sort logic (yeh pehle se tha)
     if (sortBy === "price-low") {
       filtered.sort((a, b) => parseFloat(a.price.replace('₹', '')) - parseFloat(b.price.replace('₹', '')));
     } else if (sortBy === "price-high") {
@@ -61,7 +89,7 @@ export default function CategoryPage() {
     }
 
     return filtered;
-  }, [allProducts, priceRange, sortBy]);
+  }, [allProducts, priceRange, sortBy, selectedRatings]); // [!!!] selectedRatings ko dependency array mein add karein
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -109,13 +137,20 @@ export default function CategoryPage() {
                     <div className="space-y-2">
                       {[4, 3, 2, 1].map((rating) => (
                         <label key={rating} className="flex items-center gap-2 cursor-pointer">
-                          <input type="checkbox" className="rounded" />
+                          {/* [!!!] CHECKBOX KO UPDATE KIYA GAYA */}
+                          <input 
+                            type="checkbox" 
+                            className="rounded" 
+                            checked={selectedRatings.includes(rating)}
+                            onChange={(e) => handleRatingChange(rating, e.target.checked)}
+                          />
                           <span className="text-sm">{rating}+ Stars</span>
                         </label>
                       ))}
                     </div>
                   </div>
-
+                  
+                  {/* Note: Yeh button abhi bhi UI ka hissa hai, lekin filter real-time mein apply hote hain. */}
                   <Button className="w-full" data-testid="button-apply-filters">Apply Filters</Button>
                 </CardContent>
               </Card>
@@ -147,7 +182,7 @@ export default function CategoryPage() {
                 </div>
               ) : products.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-muted-foreground">No products found in this category.</p>
+                  <p className="text-muted-foreground">No products found for these filters.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
