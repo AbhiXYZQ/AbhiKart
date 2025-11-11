@@ -6,11 +6,142 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductCard } from "@/components/ProductCard";
 import { Star, ExternalLink, Check, X } from "lucide-react";
+import { useRoute } from "wouter";
+// Import your product data and images
 import headphonesImg from "@assets/generated_images/Wireless_headphones_product_d0c9cf29.png";
 import smartphoneImg from "@assets/generated_images/Smartphone_product_shot_52f1a2b5.png";
 import smartwatchImg from "@assets/generated_images/Smart_watch_product_707b82da.png";
 
+// Step 1: Central Product Data Array
+const allProducts = [
+  {
+    id: "1",
+    title: "Premium Wireless Noise-Cancelling Headphones",
+    image: headphonesImg,
+    price: "$299.99",
+    rating: 4.5,
+    reviewCount: 1234,
+    category: "Electronics",
+    badge: "Best Seller",
+    affiliateUrl: "#",
+    description: "These premium wireless headphones deliver exceptional audio quality with powerful bass, clear mids, and crisp highs. The active noise cancellation technology effectively blocks out ambient noise, making them perfect for commuting, travel, or focused work sessions. The comfortable over-ear design with memory foam cushions ensures you can wear them for hours without discomfort.",
+    features: [
+      "Active Noise Cancellation (ANC)",
+      "30-hour battery life",
+      "Premium leather ear cushions",
+      "Bluetooth 5.0 connectivity",
+      "Foldable design with carrying case"
+    ],
+    audio: [
+      "40mm dynamic drivers",
+      "Frequency range: 20Hz - 20kHz",
+      "Impedance: 32 Ohms"
+    ],
+    connectivity: [
+      "Bluetooth 5.0",
+      "3.5mm wired option",
+      "Multi-device pairing"
+    ],
+    pros: [
+      "Excellent noise cancellation",
+      "Long battery life",
+      "Superior sound quality",
+      "Comfortable for extended wear",
+      "Premium build quality"
+    ],
+    cons: [
+      "Higher price point",
+      "Bulky for travel",
+      "Limited color options"
+    ],
+    verdict: "These headphones are an excellent choice for anyone seeking premium audio quality and effective noise cancellation. While they come at a higher price point, the superior sound quality, long battery life, and exceptional comfort justify the investment. Perfect for audiophiles, frequent travelers, and professionals who need to focus in noisy environments.",
+    overallRating: 4.5
+  },
+  {
+    id: "2",
+    title: "Latest Flagship Smartphone",
+    image: smartphoneImg,
+    price: "$899.99",
+    rating: 4.8,
+    reviewCount: 2341,
+    category: "Electronics",
+    badge: "Editor's Choice",
+    affiliateUrl: "#",
+    description: "Experience lightning-fast performance, a stunning camera, and a beautiful OLED display in the latest flagship smartphone. Its robust battery and sleek design make it a top choice for mobile enthusiasts.",
+    features: [
+      "Triple-lens camera system",
+      "5G connectivity",
+      "Water-resistant design",
+      "128GB/256GB storage options",
+      "Fast wireless charging"
+    ],
+    audio: [
+      "Stereo speakers",
+      "Dolby Atmos support"
+    ],
+    connectivity: [
+      "5G / 4G LTE",
+      "Dual SIM support",
+      "Wi-Fi 6"
+    ],
+    pros: [
+      "Superb camera quality",
+      "Fast performance",
+      "Long battery life",
+      "Elegant design"
+    ],
+    cons: [
+      "Expensive",
+      "No 3.5mm headphone jack"
+    ],
+    verdict: "Perfect for users who want the best in class smartphone experience with lots of features.",
+    overallRating: 4.8
+  },
+  {
+    id: "3",
+    title: "Smart Fitness Watch",
+    image: smartwatchImg,
+    price: "$199.99",
+    rating: 4.6,
+    reviewCount: 1023,
+    category: "Electronics",
+    badge: "",
+    affiliateUrl: "#",
+    description: "Track your health stats, monitor your workouts, and stay connected with this feature-rich smart fitness watch. It offers GPS, heart-rate monitoring, phone notifications, and water resistance.",
+    features: [
+      "Heart-rate sensor",
+      "Built-in GPS",
+      "Sleep tracking",
+      "Water resistant to 50m",
+      "Long battery life"
+    ],
+    audio: ["Vibration & notification alerts"],
+    connectivity: [
+      "Bluetooth",
+      "Works with Android/iOS"
+    ],
+    pros: [
+      "Lightweight and comfortable",
+      "Accurate fitness tracking",
+      "Long battery life"
+    ],
+    cons: [
+      "Limited app ecosystem"
+    ],
+    verdict: "Ideal for fitness enthusiasts who want reliable tracking with the convenience of a smartwatch.",
+    overallRating: 4.6
+  }
+];
+
+// Step 2: Product Review Page — Dynamic
 export default function ProductReviewPage() {
+  // Get product id from URL
+  const [match, params] = useRoute("/product/:id");
+  const productId = params?.id;
+
+  // Find selected product
+  const selectedProduct = allProducts.find(p => p.id === productId);
+
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
@@ -22,27 +153,23 @@ export default function ProductReviewPage() {
     ));
   };
 
-  // TODO: remove mock functionality - replace with real data from backend
-  const relatedProducts = [
-    {
-      id: "2",
-      title: "Latest Flagship Smartphone",
-      image: smartphoneImg,
-      price: "$899.99",
-      rating: 4.8,
-      reviewCount: 2341,
-      category: "Electronics",
-    },
-    {
-      id: "3",
-      title: "Smart Fitness Watch",
-      image: smartwatchImg,
-      price: "$199.99",
-      rating: 4.6,
-      reviewCount: 1023,
-      category: "Electronics",
-    },
-  ];
+  if (!selectedProduct) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <Card><CardContent className="p-10 text-center">
+            <h2 className="text-2xl font-bold mb-4">Product not found</h2>
+            <p>The product you are looking for does not exist.</p>
+          </CardContent></Card>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Related products show others except current
+  const relatedProducts = allProducts.filter(p => p.id !== selectedProduct.id);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -51,7 +178,7 @@ export default function ProductReviewPage() {
         <div className="container mx-auto px-4 py-8">
           {/* Breadcrumb */}
           <p className="text-sm text-muted-foreground mb-6">
-            Home / Electronics / <span className="text-foreground">Premium Wireless Headphones</span>
+            Home / {selectedProduct.category} / <span className="text-foreground">{selectedProduct.title}</span>
           </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
@@ -59,8 +186,8 @@ export default function ProductReviewPage() {
             <div className="space-y-4">
               <Card className="overflow-hidden">
                 <img
-                  src={headphonesImg}
-                  alt="Premium Wireless Headphones"
+                  src={selectedProduct.image}
+                  alt={selectedProduct.title}
                   className="w-full aspect-square object-cover"
                   data-testid="img-product-main"
                 />
@@ -69,46 +196,46 @@ export default function ProductReviewPage() {
 
             {/* Product Info */}
             <div>
-              <Badge className="mb-3 bg-accent text-accent-foreground">Best Seller</Badge>
+              {selectedProduct.badge && (
+                <Badge className="mb-3 bg-accent text-accent-foreground">{selectedProduct.badge}</Badge>
+              )}
               <h1 className="text-3xl font-bold mb-4" data-testid="text-product-title">
-                Premium Wireless Noise-Cancelling Headphones
+                {selectedProduct.title}
               </h1>
-              
               <div className="flex items-center gap-2 mb-4">
-                {renderStars(4.5)}
-                <span className="text-muted-foreground ml-2">4.5 (1,234 reviews)</span>
+                {renderStars(selectedProduct.rating)}
+                <span className="text-muted-foreground ml-2">
+                  {selectedProduct.rating} ({selectedProduct.reviewCount} reviews)
+                </span>
               </div>
-
               <p className="text-4xl font-bold text-primary mb-6" data-testid="text-product-price">
-                $299.99
+                {selectedProduct.price}
               </p>
-
               <p className="text-muted-foreground mb-6">
-                Experience superior sound quality with active noise cancellation, 30-hour battery life, 
-                and premium comfort. Perfect for music lovers and professionals who demand the best.
+                {selectedProduct.description}
               </p>
 
-              <Button size="lg" className="w-full gap-2 mb-4" data-testid="button-buy-now">
+              <Button size="lg" className="w-full gap-2 mb-4" data-testid="button-buy-now"
+                onClick={() => window.open(selectedProduct.affiliateUrl, "_blank")}>
                 Buy Now on Amazon
                 <ExternalLink className="h-5 w-5" />
               </Button>
 
+              {/* Key Features */}
               <Card className="bg-muted/50">
                 <CardContent className="p-4">
                   <h3 className="font-semibold mb-2">Key Features</h3>
                   <ul className="space-y-1 text-sm text-muted-foreground">
-                    <li>• Active Noise Cancellation (ANC)</li>
-                    <li>• 30-hour battery life</li>
-                    <li>• Premium leather ear cushions</li>
-                    <li>• Bluetooth 5.0 connectivity</li>
-                    <li>• Foldable design with carrying case</li>
+                    {selectedProduct.features.map((f, i) => (
+                      <li key={i}>• {f}</li>
+                    ))}
                   </ul>
                 </CardContent>
               </Card>
             </div>
           </div>
 
-          {/* Detailed Review */}
+          {/* Detailed Review Tabs */}
           <Tabs defaultValue="description" className="mb-12">
             <TabsList className="w-full justify-start">
               <TabsTrigger value="description" data-testid="tab-description">Description</TabsTrigger>
@@ -121,11 +248,7 @@ export default function ProductReviewPage() {
               <Card>
                 <CardContent className="p-6">
                   <p className="text-muted-foreground leading-relaxed">
-                    These premium wireless headphones deliver exceptional audio quality with powerful bass, 
-                    clear mids, and crisp highs. The active noise cancellation technology effectively blocks 
-                    out ambient noise, making them perfect for commuting, travel, or focused work sessions. 
-                    The comfortable over-ear design with memory foam cushions ensures you can wear them for 
-                    hours without discomfort.
+                    {selectedProduct.description}
                   </p>
                 </CardContent>
               </Card>
@@ -138,17 +261,17 @@ export default function ProductReviewPage() {
                     <div>
                       <h4 className="font-semibold mb-2">Audio Performance</h4>
                       <ul className="space-y-1 text-sm text-muted-foreground">
-                        <li>• 40mm dynamic drivers</li>
-                        <li>• Frequency range: 20Hz - 20kHz</li>
-                        <li>• Impedance: 32 Ohms</li>
+                        {(selectedProduct.audio || []).map((line, i) => (
+                          <li key={i}>• {line}</li>
+                        ))}
                       </ul>
                     </div>
                     <div>
                       <h4 className="font-semibold mb-2">Connectivity</h4>
                       <ul className="space-y-1 text-sm text-muted-foreground">
-                        <li>• Bluetooth 5.0</li>
-                        <li>• 3.5mm wired option</li>
-                        <li>• Multi-device pairing</li>
+                        {(selectedProduct.connectivity || []).map((line, i) => (
+                          <li key={i}>• {line}</li>
+                        ))}
                       </ul>
                     </div>
                   </div>
@@ -165,11 +288,9 @@ export default function ProductReviewPage() {
                       Pros
                     </h4>
                     <ul className="space-y-2 text-sm">
-                      <li>• Excellent noise cancellation</li>
-                      <li>• Long battery life</li>
-                      <li>• Superior sound quality</li>
-                      <li>• Comfortable for extended wear</li>
-                      <li>• Premium build quality</li>
+                      {(selectedProduct.pros || []).map((pro, i) => (
+                        <li key={i}>• {pro}</li>
+                      ))}
                     </ul>
                   </CardContent>
                 </Card>
@@ -180,9 +301,9 @@ export default function ProductReviewPage() {
                       Cons
                     </h4>
                     <ul className="space-y-2 text-sm">
-                      <li>• Higher price point</li>
-                      <li>• Bulky for travel</li>
-                      <li>• Limited color options</li>
+                      {(selectedProduct.cons || []).map((con, i) => (
+                        <li key={i}>• {con}</li>
+                      ))}
                     </ul>
                   </CardContent>
                 </Card>
@@ -194,16 +315,12 @@ export default function ProductReviewPage() {
                 <CardContent className="p-6">
                   <h3 className="text-xl font-semibold mb-4">Final Verdict</h3>
                   <p className="text-muted-foreground leading-relaxed mb-4">
-                    These headphones are an excellent choice for anyone seeking premium audio quality and 
-                    effective noise cancellation. While they come at a higher price point, the superior 
-                    sound quality, long battery life, and exceptional comfort justify the investment. 
-                    Perfect for audiophiles, frequent travelers, and professionals who need to focus in 
-                    noisy environments.
+                    {selectedProduct.verdict}
                   </p>
                   <div className="flex items-center gap-2">
                     <span className="font-semibold">Overall Rating:</span>
-                    {renderStars(4.5)}
-                    <span className="text-lg font-bold">4.5/5</span>
+                    {renderStars(selectedProduct.overallRating)}
+                    <span className="text-lg font-bold">{selectedProduct.overallRating}/5</span>
                   </div>
                 </CardContent>
               </Card>
