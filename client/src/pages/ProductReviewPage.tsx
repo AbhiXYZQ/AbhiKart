@@ -7,38 +7,34 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductCard } from "@/components/ProductCard";
 import { Star, ExternalLink } from "lucide-react";
 import { useRoute } from "wouter";
-import { useQuery } from "@tanstack/react-query"; // [!!!] useQuery import kiya gaya
-import type { Product } from "@shared/schema"; // [!!!] Product type schema se import kiya gaya
+import { useQuery } from "@tanstack/react-query";
+import type { Product } from "@shared/schema";
 
-// [!!!] Poora static 'allProducts' array yahaan se hata diya gaya hai.
-
-// Product Review Page — Ab yeh dynamic hai
 export default function ProductReviewPage() {
   // URL se product id praapt karein
   const [match, params] = useRoute("/product/:id");
   const productId = params?.id;
 
-  // [!!!] API se product fetch karne ke liye useQuery ka istemaal karein
+  // API se product fetch karne ke liye useQuery ka istemaal karein
   const { 
     data: selectedProduct, 
     isLoading, 
     isError 
   } = useQuery<Product>({
-    queryKey: ['/api/products', productId], // Product ID se key banayein
+    queryKey: ['/api/products', productId], 
     queryFn: async () => {
       if (!productId) throw new Error("No product ID");
       const res = await fetch(`/api/products/${productId}`);
       if (!res.ok) {
-        // Yeh 'isError' state ko trigger karega
         throw new Error('Product not found');
       }
       return res.json();
     },
-    enabled: !!productId, // Yeh tabhi run hoga jab productId maujood ho
-    retry: false, // 404 par retry na karein
+    enabled: !!productId, 
+    retry: false,
   });
 
-  // [!!!] Related products ko category ke adhaar par fetch karein
+  // Related products ko category ke adhaar par fetch karein
   const { data: relatedProducts = [] } = useQuery<Product[]>({
     queryKey: ['/api/products/category', selectedProduct?.category],
     queryFn: async () => {
@@ -47,9 +43,8 @@ export default function ProductReviewPage() {
       if (!res.ok) throw new Error('Failed to fetch related products');
       return res.json();
     },
-    // select ka istemaal karke current product ko list se filter karein aur sirf 3 dikhayein
     select: (data) => data.filter(p => p.id !== selectedProduct?.id).slice(0, 3),
-    enabled: !!selectedProduct, // Yeh tabhi run hoga jab main product load ho chuka ho
+    enabled: !!selectedProduct, 
   });
 
 
@@ -64,7 +59,6 @@ export default function ProductReviewPage() {
     ));
   };
 
-  // [!!!] Loading state add karein
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -77,7 +71,6 @@ export default function ProductReviewPage() {
     );
   }
 
-  // [!!!] Error state (ya product na milne par)
   if (isError || !selectedProduct) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -93,7 +86,6 @@ export default function ProductReviewPage() {
     );
   }
 
-  // Ab 'selectedProduct' database se aaya hua data hai
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -134,25 +126,21 @@ export default function ProductReviewPage() {
               <p className="text-4xl font-bold text-primary mb-6" data-testid="text-product-price">
                 {selectedProduct.price}
               </p>
-              <p className="text-muted-foreground mb-6">
-                {selectedProduct.description}
-              </p>
+              
+              {/* [!!!] DESCRIPTION KO YAHAN SE HATA DIYA GAYA HAI [!!!] */}
 
               <Button size="lg" className="w-full gap-2 mb-4" data-testid="button-buy-now"
                 onClick={() => window.open(selectedProduct.affiliateUrl, "_blank")}>
                 Buy Now on Amazon
                 <ExternalLink className="h-5 w-5" />
               </Button>
-
-              {/* [!!!] Key Features section hata diya gaya hai kyonki 'features' array schema mein nahi hai */}
             </div>
           </div>
 
-          {/* [!!!] Tabs ko simplify kiya gaya hai sirf 'description' dikhane ke liye */}
+          {/* Tabs - Yahaan description dikhega */}
           <Tabs defaultValue="description" className="mb-12">
             <TabsList className="w-full justify-start">
               <TabsTrigger value="description" data-testid="tab-description">Description</TabsTrigger>
-              {/* 'Features', 'Pros & Cons', 'Verdict' tabs hata diye gaye hain */}
             </TabsList>
 
             <TabsContent value="description" className="mt-6">
@@ -164,9 +152,6 @@ export default function ProductReviewPage() {
                 </CardContent>
               </Card>
             </TabsContent>
-
-            {/* Baaki tabs ke content hata diye gaye hain */}
-
           </Tabs>
 
           {/* Related Products */}
