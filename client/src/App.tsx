@@ -13,6 +13,7 @@ import DisclaimerPage from "@/pages/DisclaimerPage";
 import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage";
 import AdminPanel from "@/pages/AdminPanel";
 import NotFound from "@/pages/not-found";
+import SearchPage from "@/pages/SearchPage";
 
 function Router() {
   return (
