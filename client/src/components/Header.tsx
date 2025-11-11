@@ -102,7 +102,7 @@ export function Header() {
                 placeholder="Search products..."
                 className="pl-10"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.targe.value)}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 data-testid="input-search-mobile"
               />
             </form>

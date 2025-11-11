@@ -10,7 +10,8 @@ import { Search } from "lucide-react";
 
 export default function SearchPage() {
   const [location] = useLocation();
-  const searchParams = new URLSearchParams(location.search);
+  const search = location.includes('?') ? location.substring(location.indexOf('?')) : '';
+  const searchParams = new URLSearchParams(search);
   const query = searchParams.get('q') || "";
 
   const { data: products = [], isLoading } = useQuery<Product[]>({
