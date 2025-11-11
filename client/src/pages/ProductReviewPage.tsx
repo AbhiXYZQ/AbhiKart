@@ -5,142 +5,53 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductCard } from "@/components/ProductCard";
-import { Star, ExternalLink, Check, X } from "lucide-react";
+import { Star, ExternalLink } from "lucide-react";
 import { useRoute } from "wouter";
-// Import your product data and images
-import headphonesImg from "@assets/generated_images/Wireless_headphones_product_d0c9cf29.png";
-import smartphoneImg from "@assets/generated_images/Smartphone_product_shot_52f1a2b5.png";
-import smartwatchImg from "@assets/generated_images/Smart_watch_product_707b82da.png";
+import { useQuery } from "@tanstack/react-query"; // [!!!] useQuery import kiya gaya
+import type { Product } from "@shared/schema"; // [!!!] Product type schema se import kiya gaya
 
-// Step 1: Central Product Data Array
-const allProducts = [
-  {
-    id: "1",
-    title: "Premium Wireless Noise-Cancelling Headphones",
-    image: headphonesImg,
-    price: "$299.99",
-    rating: 4.5,
-    reviewCount: 1234,
-    category: "Electronics",
-    badge: "Best Seller",
-    affiliateUrl: "#",
-    description: "These premium wireless headphones deliver exceptional audio quality with powerful bass, clear mids, and crisp highs. The active noise cancellation technology effectively blocks out ambient noise, making them perfect for commuting, travel, or focused work sessions. The comfortable over-ear design with memory foam cushions ensures you can wear them for hours without discomfort.",
-    features: [
-      "Active Noise Cancellation (ANC)",
-      "30-hour battery life",
-      "Premium leather ear cushions",
-      "Bluetooth 5.0 connectivity",
-      "Foldable design with carrying case"
-    ],
-    audio: [
-      "40mm dynamic drivers",
-      "Frequency range: 20Hz - 20kHz",
-      "Impedance: 32 Ohms"
-    ],
-    connectivity: [
-      "Bluetooth 5.0",
-      "3.5mm wired option",
-      "Multi-device pairing"
-    ],
-    pros: [
-      "Excellent noise cancellation",
-      "Long battery life",
-      "Superior sound quality",
-      "Comfortable for extended wear",
-      "Premium build quality"
-    ],
-    cons: [
-      "Higher price point",
-      "Bulky for travel",
-      "Limited color options"
-    ],
-    verdict: "These headphones are an excellent choice for anyone seeking premium audio quality and effective noise cancellation. While they come at a higher price point, the superior sound quality, long battery life, and exceptional comfort justify the investment. Perfect for audiophiles, frequent travelers, and professionals who need to focus in noisy environments.",
-    overallRating: 4.5
-  },
-  {
-    id: "2",
-    title: "Latest Flagship Smartphone",
-    image: smartphoneImg,
-    price: "$899.99",
-    rating: 4.8,
-    reviewCount: 2341,
-    category: "Electronics",
-    badge: "Editor's Choice",
-    affiliateUrl: "#",
-    description: "Experience lightning-fast performance, a stunning camera, and a beautiful OLED display in the latest flagship smartphone. Its robust battery and sleek design make it a top choice for mobile enthusiasts.",
-    features: [
-      "Triple-lens camera system",
-      "5G connectivity",
-      "Water-resistant design",
-      "128GB/256GB storage options",
-      "Fast wireless charging"
-    ],
-    audio: [
-      "Stereo speakers",
-      "Dolby Atmos support"
-    ],
-    connectivity: [
-      "5G / 4G LTE",
-      "Dual SIM support",
-      "Wi-Fi 6"
-    ],
-    pros: [
-      "Superb camera quality",
-      "Fast performance",
-      "Long battery life",
-      "Elegant design"
-    ],
-    cons: [
-      "Expensive",
-      "No 3.5mm headphone jack"
-    ],
-    verdict: "Perfect for users who want the best in class smartphone experience with lots of features.",
-    overallRating: 4.8
-  },
-  {
-    id: "3",
-    title: "Smart Fitness Watch",
-    image: smartwatchImg,
-    price: "$199.99",
-    rating: 4.6,
-    reviewCount: 1023,
-    category: "Electronics",
-    badge: "",
-    affiliateUrl: "#",
-    description: "Track your health stats, monitor your workouts, and stay connected with this feature-rich smart fitness watch. It offers GPS, heart-rate monitoring, phone notifications, and water resistance.",
-    features: [
-      "Heart-rate sensor",
-      "Built-in GPS",
-      "Sleep tracking",
-      "Water resistant to 50m",
-      "Long battery life"
-    ],
-    audio: ["Vibration & notification alerts"],
-    connectivity: [
-      "Bluetooth",
-      "Works with Android/iOS"
-    ],
-    pros: [
-      "Lightweight and comfortable",
-      "Accurate fitness tracking",
-      "Long battery life"
-    ],
-    cons: [
-      "Limited app ecosystem"
-    ],
-    verdict: "Ideal for fitness enthusiasts who want reliable tracking with the convenience of a smartwatch.",
-    overallRating: 4.6
-  }
-];
+// [!!!] Poora static 'allProducts' array yahaan se hata diya gaya hai.
 
-// Step 2: Product Review Page — Dynamic
+// Product Review Page — Ab yeh dynamic hai
 export default function ProductReviewPage() {
-  // Get product id from URL
+  // URL se product id praapt karein
   const [match, params] = useRoute("/product/:id");
   const productId = params?.id;
 
-  // Find selected product
-  const selectedProduct = allProducts.find(p => p.id === productId);
+  // [!!!] API se product fetch karne ke liye useQuery ka istemaal karein
+  const { 
+    data: selectedProduct, 
+    isLoading, 
+    isError 
+  } = useQuery<Product>({
+    queryKey: ['/api/products', productId], // Product ID se key banayein
+    queryFn: async () => {
+      if (!productId) throw new Error("No product ID");
+      const res = await fetch(`/api/products/${productId}`);
+      if (!res.ok) {
+        // Yeh 'isError' state ko trigger karega
+        throw new Error('Product not found');
+      }
+      return res.json();
+    },
+    enabled: !!productId, // Yeh tabhi run hoga jab productId maujood ho
+    retry: false, // 404 par retry na karein
+  });
+
+  // [!!!] Related products ko category ke adhaar par fetch karein
+  const { data: relatedProducts = [] } = useQuery<Product[]>({
+    queryKey: ['/api/products/category', selectedProduct?.category],
+    queryFn: async () => {
+      if (!selectedProduct?.category) return [];
+      const res = await fetch(`/api/products/category/${encodeURIComponent(selectedProduct.category)}`);
+      if (!res.ok) throw new Error('Failed to fetch related products');
+      return res.json();
+    },
+    // select ka istemaal karke current product ko list se filter karein aur sirf 3 dikhayein
+    select: (data) => data.filter(p => p.id !== selectedProduct?.id).slice(0, 3),
+    enabled: !!selectedProduct, // Yeh tabhi run hoga jab main product load ho chuka ho
+  });
+
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -153,7 +64,21 @@ export default function ProductReviewPage() {
     ));
   };
 
-  if (!selectedProduct) {
+  // [!!!] Loading state add karein
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <p className="text-muted-foreground">Loading product details...</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // [!!!] Error state (ya product na milne par)
+  if (isError || !selectedProduct) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -168,9 +93,7 @@ export default function ProductReviewPage() {
     );
   }
 
-  // Related products show others except current
-  const relatedProducts = allProducts.filter(p => p.id !== selectedProduct.id);
-
+  // Ab 'selectedProduct' database se aaya hua data hai
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -221,27 +144,15 @@ export default function ProductReviewPage() {
                 <ExternalLink className="h-5 w-5" />
               </Button>
 
-              {/* Key Features */}
-              <Card className="bg-muted/50">
-                <CardContent className="p-4">
-                  <h3 className="font-semibold mb-2">Key Features</h3>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
-                    {selectedProduct.features.map((f, i) => (
-                      <li key={i}>• {f}</li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
+              {/* [!!!] Key Features section hata diya gaya hai kyonki 'features' array schema mein nahi hai */}
             </div>
           </div>
 
-          {/* Detailed Review Tabs */}
+          {/* [!!!] Tabs ko simplify kiya gaya hai sirf 'description' dikhane ke liye */}
           <Tabs defaultValue="description" className="mb-12">
             <TabsList className="w-full justify-start">
               <TabsTrigger value="description" data-testid="tab-description">Description</TabsTrigger>
-              <TabsTrigger value="features" data-testid="tab-features">Features</TabsTrigger>
-              <TabsTrigger value="pros-cons" data-testid="tab-pros-cons">Pros & Cons</TabsTrigger>
-              <TabsTrigger value="verdict" data-testid="tab-verdict">Verdict</TabsTrigger>
+              {/* 'Features', 'Pros & Cons', 'Verdict' tabs hata diye gaye hain */}
             </TabsList>
 
             <TabsContent value="description" className="mt-6">
@@ -254,77 +165,8 @@ export default function ProductReviewPage() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="features" className="mt-6">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <h4 className="font-semibold mb-2">Audio Performance</h4>
-                      <ul className="space-y-1 text-sm text-muted-foreground">
-                        {(selectedProduct.audio || []).map((line, i) => (
-                          <li key={i}>• {line}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-2">Connectivity</h4>
-                      <ul className="space-y-1 text-sm text-muted-foreground">
-                        {(selectedProduct.connectivity || []).map((line, i) => (
-                          <li key={i}>• {line}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
+            {/* Baaki tabs ke content hata diye gaye hain */}
 
-            <TabsContent value="pros-cons" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="border-green-500/20 bg-green-500/5">
-                  <CardContent className="p-6">
-                    <h4 className="font-semibold text-green-600 dark:text-green-400 mb-4 flex items-center gap-2">
-                      <Check className="h-5 w-5" />
-                      Pros
-                    </h4>
-                    <ul className="space-y-2 text-sm">
-                      {(selectedProduct.pros || []).map((pro, i) => (
-                        <li key={i}>• {pro}</li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-                <Card className="border-red-500/20 bg-red-500/5">
-                  <CardContent className="p-6">
-                    <h4 className="font-semibold text-red-600 dark:text-red-400 mb-4 flex items-center gap-2">
-                      <X className="h-5 w-5" />
-                      Cons
-                    </h4>
-                    <ul className="space-y-2 text-sm">
-                      {(selectedProduct.cons || []).map((con, i) => (
-                        <li key={i}>• {con}</li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="verdict" className="mt-6">
-              <Card>
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold mb-4">Final Verdict</h3>
-                  <p className="text-muted-foreground leading-relaxed mb-4">
-                    {selectedProduct.verdict}
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">Overall Rating:</span>
-                    {renderStars(selectedProduct.overallRating)}
-                    <span className="text-lg font-bold">{selectedProduct.overallRating}/5</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
           </Tabs>
 
           {/* Related Products */}
