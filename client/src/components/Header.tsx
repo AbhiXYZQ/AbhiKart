@@ -1,4 +1,6 @@
-import { Link, useLocation } from "wouter"; // [!!!] useLocation import karein
+// client/src/components/Header.tsx
+
+import { Link, useLocation } from "wouter";
 import { Search, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +10,7 @@ import { useState } from "react";
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [, setLocation] = useLocation(); // [!!!] wouter se setLocation hook lein
+  const [, setLocation] = useLocation();
 
   const categories = [
     { name: "Electronics", path: "/category/electronics" },
@@ -18,15 +20,13 @@ export function Header() {
     { name: "Lifestyle", path: "/category/lifestyle" },
   ];
 
-  // [!!!] Search submit handler function
   const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Page reload hone se rokein
+    e.preventDefault();
     const query = searchQuery.trim();
     if (query) {
-      // Naye search page par redirect karein
       setLocation(`/search?q=${encodeURIComponent(query)}`);
-      setSearchQuery(""); // Search bar ko clear karein
-      setMobileMenuOpen(false); // Mobile menu band karein (agar khula ho)
+      setSearchQuery("");
+      setMobileMenuOpen(false);
     }
   };
 
@@ -60,7 +60,7 @@ export function Header() {
             </Link>
           </nav>
 
-          {/* [!!!] Desktop Search Bar ko <form> mein wrap kiya gaya */}
+          {/* Desktop Search Bar */}
           <form className="hidden lg:flex flex-1 max-w-md" onSubmit={handleSearchSubmit}>
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -94,7 +94,7 @@ export function Header() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t py-4 space-y-4">
             
-            {/* [!!!] Mobile Search Bar ko <form> mein wrap kiya gaya */}
+            {/* Mobile Search Bar */}
             <form className="relative" onSubmit={handleSearchSubmit}>
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -102,6 +102,7 @@ export function Header() {
                 placeholder="Search products..."
                 className="pl-10"
                 value={searchQuery}
+                // [!!!] TYPO FIX: e.targe -> e.target [!!!]
                 onChange={(e) => setSearchQuery(e.target.value)}
                 data-testid="input-search-mobile"
               />

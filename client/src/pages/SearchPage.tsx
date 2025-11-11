@@ -1,23 +1,24 @@
-// Nayi file: client/src/pages/SearchPage.tsx
+// client/src/pages/SearchPage.tsx
 
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
-import { useLocation } from "wouter";
+// [!!!] 'useLocation' ki zaroorat nahi hai
 import { useQuery } from "@tanstack/react-query";
 import type { Product } from "@shared/schema";
 import { Search } from "lucide-react";
 
 export default function SearchPage() {
-  const [location] = useLocation();
-  const search = location.includes('?') ? location.substring(location.indexOf('?')) : '';
-  const searchParams = new URLSearchParams(search);
+  // [!!!] FIX: URL se query string padhne ka sahi tareeka
+  // Hum 'window.location.search' ka istemaal karenge
+  const searchParams = new URLSearchParams(window.location.search);
   const query = searchParams.get('q') || "";
 
   const { data: products = [], isLoading } = useQuery<Product[]>({
     queryKey: ['/api/search', query],
     queryFn: async () => {
       if (!query) return [];
+      // Backend API ko call karein
       const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
       if (!res.ok) {
         throw new Error("Search failed");
