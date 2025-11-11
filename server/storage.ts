@@ -1,6 +1,7 @@
 import { users, products, blogPosts, type User, type InsertUser, type Product, type InsertProduct, type BlogPost, type InsertBlogPost } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, sql } from "drizzle-orm";
+// [!!!] 'ilike' aur 'or' ko import kiya gaya
+import { eq, desc, sql, or, ilike } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
@@ -13,6 +14,9 @@ export interface IStorage {
   getProductsByCategory(category: string): Promise<Product[]>;
   updateProduct(id: string, product: Partial<InsertProduct>): Promise<Product | undefined>;
   deleteProduct(id: string): Promise<boolean>;
+  
+  // [!!!] Search function ko interface mein add kiya gaya
+  searchProducts(query: string): Promise<Product[]>;
   
   createBlogPost(blogPost: InsertBlogPost): Promise<BlogPost>;
   getBlogPosts(): Promise<BlogPost[]>;
@@ -52,15 +56,11 @@ export class DatabaseStorage implements IStorage {
     return product || undefined;
   }
 
- async getProductsByCategory(category: string): Promise<Product[]> {
-  // हम सीधे 'eq' (equals) का उपयोग कर रहे हैं।
-  // यह केस-सेंसिटिव (case-sensitive) है, लेकिन यह काम करना चाहिए क्योंकि
-  // आपके डेटाबेस में 'Electronics' (E कैपिटल) है
-  // और आपकी API रिक्वेस्ट भी '/Electronics' (E कैपिटल) के लिए है।
-  return await db.select().from(products).where(
-    eq(products.category, category)
-  );
-}
+  async getProductsByCategory(category: string): Promise<Product[]> {
+    return await db.select().from(products).where(
+      eq(products.category, category)
+    );
+  }
 
   async updateProduct(id: string, updates: Partial<InsertProduct>): Promise<Product | undefined> {
     const [product] = await db
@@ -75,6 +75,20 @@ export class DatabaseStorage implements IStorage {
     const result = await db.delete(products).where(eq(products.id, id)).returning();
     return result.length > 0;
   }
+
+  // [!!!] NAYA SEARCH FUNCTION [!!!]
+  // Yeh title, description, aur category mein case-insensitive search karega
+  async searchProducts(query: string): Promise<Product[]> {
+    const searchTerm = `%${query}%`;
+    return await db.select().from(products).where(
+      or(
+        ilike(products.title, searchTerm),
+        ilike(products.description, searchTerm),
+        ilike(products.category, searchTerm)
+      )
+    );
+  }
+  // [!!!] NAYA FUNCTION YAHAN KHATM HOTA HAI [!!!]
 
   async createBlogPost(insertBlogPost: InsertBlogPost): Promise<BlogPost> {
     const [blogPost] = await db.insert(blogPosts).values(insertBlogPost).returning();

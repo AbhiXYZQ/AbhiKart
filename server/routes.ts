@@ -19,62 +19,19 @@ const requireAuth = (req: Request, res: Response, next: NextFunction) => {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/register", async (req, res) => {
-    try {
-      const { username, password } = insertUserSchema.parse(req.body);
-      
-      const existingUser = await storage.getUserByUsername(username);
-      if (existingUser) {
-        return res.status(400).json({ error: "Username already exists" });
-      }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await storage.createUser({ username, password: hashedPassword });
-      
-      req.session.userId = user.id;
-      res.json({ id: user.id, username: user.username });
-    } catch (error) {
-      res.status(400).json({ error: "Invalid request" });
-    }
+    // ... (aapka register code)
   });
 
   app.post("/api/auth/login", async (req, res) => {
-    try {
-      const { username, password } = insertUserSchema.parse(req.body);
-      
-      const user = await storage.getUserByUsername(username);
-      if (!user) {
-        return res.status(401).json({ error: "Invalid credentials" });
-      }
-
-      const validPassword = await bcrypt.compare(password, user.password);
-      if (!validPassword) {
-        return res.status(401).json({ error: "Invalid credentials" });
-      }
-
-      req.session.userId = user.id;
-      res.json({ id: user.id, username: user.username });
-    } catch (error) {
-      res.status(400).json({ error: "Invalid request" });
-    }
+    // ... (aapka login code)
   });
 
   app.post("/api/auth/logout", (req, res) => {
-    req.session.destroy(() => {
-      res.json({ success: true });
-    });
+    // ... (aapka logout code)
   });
 
   app.get("/api/auth/user", async (req, res) => {
-    if (!req.session.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-
-    const user = await storage.getUser(req.session.userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    res.json({ id: user.id, username: user.username });
+    // ... (aapka auth user code)
   });
 
   app.get("/api/products", async (req, res) => {
@@ -100,29 +57,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post("/api/products", requireAuth, async (req, res) => {
-    try {
-      const productData = insertProductSchema.parse(req.body);
-      const product = await storage.createProduct(productData);
-      res.status(201).json(product);
-    } catch (error) {
-      res.status(400).json({ error: "Invalid product data" });
-    }
+    // ... (aapka create product code)
   });
 
   app.patch("/api/products/:id", requireAuth, async (req, res) => {
-    try {
-      const { id } = req.params;
-      const updates = req.body;
-      
-      const product = await storage.updateProduct(id, updates);
-      if (!product) {
-        return res.status(404).json({ error: "Product not found" });
-      }
-
-      res.json(product);
-    } catch (error) {
-      res.status(400).json({ error: "Invalid update data" });
-    }
+    // ... (aapka update product code)
   });
 
   app.delete("/api/products/:id", requireAuth, async (req, res) => {
@@ -136,68 +75,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ success: true });
   });
 
+  // [!!!] NAYA SEARCH ROUTE [!!!]
+  app.get("/api/search", async (req, res) => {
+    const query = req.query.q as string;
+
+    if (!query) {
+      // Agar 'q' parameter nahi hai, toh empty array return karein
+      return res.json([]);
+    }
+
+    try {
+      const products = await storage.searchProducts(query);
+      res.json(products);
+    } catch (error) {
+      console.error("Search failed:", error);
+      res.status(500).json({ error: "Search failed" });
+    }
+  });
+  // [!!!] NAYA ROUTE YAHAN KHATM HOTA HAI [!!!]
+
   app.get("/api/blog-posts", async (req, res) => {
     const blogPosts = await storage.getBlogPosts();
     res.json(blogPosts);
   });
 
   app.get("/api/blog-posts/slug/:slug", async (req, res) => {
-    const { slug } = req.params;
-    const blogPost = await storage.getBlogPostBySlug(slug);
-    
-    if (!blogPost) {
-      return res.status(404).json({ error: "Blog post not found" });
-    }
-
-    res.json(blogPost);
+    // ... (aapka blog slug code)
   });
 
   app.get("/api/blog-posts/:id", async (req, res) => {
-    const { id } = req.params;
-    const blogPost = await storage.getBlogPost(id);
-    
-    if (!blogPost) {
-      return res.status(404).json({ error: "Blog post not found" });
-    }
-
-    res.json(blogPost);
+    // ... (aapka blog id code)
   });
 
   app.post("/api/blog-posts", requireAuth, async (req, res) => {
-    try {
-      const blogPostData = insertBlogPostSchema.parse(req.body);
-      const blogPost = await storage.createBlogPost(blogPostData);
-      res.status(201).json(blogPost);
-    } catch (error) {
-      res.status(400).json({ error: "Invalid blog post data" });
-    }
+    // ... (aapka create blog code)
   });
 
   app.patch("/api/blog-posts/:id", requireAuth, async (req, res) => {
-    try {
-      const { id } = req.params;
-      const updates = req.body;
-      
-      const blogPost = await storage.updateBlogPost(id, updates);
-      if (!blogPost) {
-        return res.status(404).json({ error: "Blog post not found" });
-      }
-
-      res.json(blogPost);
-    } catch (error) {
-      res.status(400).json({ error: "Invalid update data" });
-    }
+    // ... (aapka update blog code)
   });
 
   app.delete("/api/blog-posts/:id", requireAuth, async (req, res) => {
-    const { id } = req.params;
-    const deleted = await storage.deleteBlogPost(id);
-    
-    if (!deleted) {
-      return res.status(404).json({ error: "Blog post not found" });
-    }
-
-    res.json({ success: true });
+    // ... (aapka delete blog code)
   });
 
   const httpServer = createServer(app);

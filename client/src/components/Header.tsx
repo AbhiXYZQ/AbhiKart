@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter"; // [!!!] useLocation import karein
 import { Search, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { useState } from "react";
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [, setLocation] = useLocation(); // [!!!] wouter se setLocation hook lein
 
   const categories = [
     { name: "Electronics", path: "/category/electronics" },
@@ -16,6 +17,18 @@ export function Header() {
     { name: "Beauty", path: "/category/beauty" },
     { name: "Lifestyle", path: "/category/lifestyle" },
   ];
+
+  // [!!!] Search submit handler function
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault(); // Page reload hone se rokein
+    const query = searchQuery.trim();
+    if (query) {
+      // Naye search page par redirect karein
+      setLocation(`/search?q=${encodeURIComponent(query)}`);
+      setSearchQuery(""); // Search bar ko clear karein
+      setMobileMenuOpen(false); // Mobile menu band karein (agar khula ho)
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -47,8 +60,8 @@ export function Header() {
             </Link>
           </nav>
 
-          {/* Search Bar */}
-          <div className="hidden lg:flex flex-1 max-w-md">
+          {/* [!!!] Desktop Search Bar ko <form> mein wrap kiya gaya */}
+          <form className="hidden lg:flex flex-1 max-w-md" onSubmit={handleSearchSubmit}>
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -60,7 +73,7 @@ export function Header() {
                 data-testid="input-search"
               />
             </div>
-          </div>
+          </form>
 
           {/* Right Actions */}
           <div className="flex items-center gap-2">
@@ -80,17 +93,20 @@ export function Header() {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden border-t py-4 space-y-4">
-            <div className="relative">
+            
+            {/* [!!!] Mobile Search Bar ko <form> mein wrap kiya gaya */}
+            <form className="relative" onSubmit={handleSearchSubmit}>
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
                 placeholder="Search products..."
                 className="pl-10"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => setSearchQuery(e.targe.value)}
                 data-testid="input-search-mobile"
               />
-            </div>
+            </form>
+            
             <nav className="flex flex-col space-y-3">
               {categories.map((category) => (
                 <Link key={category.path} href={category.path}>
