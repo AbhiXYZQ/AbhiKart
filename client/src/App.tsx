@@ -29,7 +29,7 @@ function Router() {
       <Route path="/blog" component={BlogPage} />
       
       {/* [!!!] ISS ROUTE KO UPDATE KAREIN [!!!] */}
-      {/* Yeh route ab naye BlogPostPage ko point karega */}
+      {/* Ise 'BlogPage' se badal kar 'BlogPostPage' karein */}
       <Route path="/blog/:slug" component={BlogPostPage} />
       
       <Route path="/about" component={AboutPage} />
