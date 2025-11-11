@@ -161,7 +161,8 @@ export default function ProductReviewPage() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {relatedProducts.map((product) => (
-                <ProductCard key={product.id} {...product} />
+                // ensure badge is undefined instead of null to match ProductCardProps
+                <ProductCard key={product.id} {...product} badge={product.badge ?? undefined} />
               ))}
             </div>
           </section>
